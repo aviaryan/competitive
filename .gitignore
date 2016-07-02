@@ -1,0 +1,6 @@
+# java
+*.class
+# output
+ou*.txt
+# codejam
+*.in
