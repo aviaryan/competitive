@@ -15,7 +15,7 @@ int ans;
 int n;
 
 void solve(int pos, int target){
-	if (pos == n){
+	if ((pos == n) && (bc[n-1] == 0)){
 		ans = max(target, ans);
 		return;
 	}
