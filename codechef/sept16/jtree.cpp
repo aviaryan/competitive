@@ -23,7 +23,7 @@ int n;
 
 
 // set val in tree
-void update_tree(int v, int ind){
+void update_tree(ll v, int ind){
 	int mid, l=0, r=n-1, p=1;
 	// find point
 	while (l != r){
