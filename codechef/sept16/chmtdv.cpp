@@ -122,7 +122,8 @@ int main(){
 	}
 
 	vector<int>::iterator vit;
-	ll lmt = max(mx, sum / (ll) p);
+	// ll lmt = max(mx, sum / (ll) p);
+	ll lmt = sum / (ll) p;
 
 	doStuff(horiz, lmt);
 	for (vit = v.begin(); vit != v.end(); vit++){
