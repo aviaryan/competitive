@@ -5,7 +5,6 @@
 #define s(a) scanf("%d", &a)
 #define sl(a) scanf("%lld", &a)
 #define p(a) printf("%d\n", a)
-#define PI 3.14159265
 using namespace std;
 
 typedef unsigned long long ull;
@@ -14,12 +13,12 @@ typedef long long ll;
 
 int main(){
 	int t, i;
-	double s,v;
+	long double s,v;
 	s(t);
 
 	while (t--){
-		scanf("%lf %lf", &s, &v);
-		printf("%.10lf\n", s / (v + v * cos(60.0 * PI / 180.0)));
+		scanf("%Lf %Lf", &s, &v);
+		printf("%.10Lf\n", (2.0/3.0) * (s/v));
 	}
 
 	return 0;
