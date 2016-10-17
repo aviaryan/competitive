@@ -60,6 +60,7 @@ double createAns(int * arr, bool * isRemoved, int a, double r){
 
 int main(){
 	int t, i;
+	ios_base::sync_with_stdio(0);
 	cin >> n >> k >> d;
 	int arr[n], cpy[n];
 	string output = "";
