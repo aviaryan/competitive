@@ -39,7 +39,7 @@ ll combination(ll n, ll r){
 }
 
 void solve(int place, int rem, ll ans){
-	if (place > LT)
+	if (place >= LT)
 		return;
 	if (rem < 0)
 		return;
