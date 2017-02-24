@@ -2,5 +2,10 @@
 *.class
 # output
 ou*.txt
+*.out
 # codejam
 *.in
+
+# mac dsstores
+# **/.DS_Store
+.DS_Store
