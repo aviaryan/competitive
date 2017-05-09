@@ -21,6 +21,7 @@ struct node {
 // vars
 struct node roots[26];
 int ct;
+char out[4 * 100000 + 1];
 
 // end vars
 
@@ -42,8 +43,6 @@ bool isNodeInit(struct node * nd){
 }
 
 void recurse(struct node * nd, int lct){ // only if +-
-	if (!isNodeInit(nd))
-		return;
 	if (ct < 0) // tragedy
 		return;
 
@@ -67,7 +66,7 @@ void recurse(struct node * nd, int lct){ // only if +-
 		return;
 	}
 
-	char cstr[lct + 2];
+	char cstr[lct + 4];
 	struct node * tmp;
 	int tlct = lct;
 	// good..bad and bad..good
@@ -76,7 +75,7 @@ void recurse(struct node * nd, int lct){ // only if +-
 		if (isNodeInit(nn)){
 			if (nn->good == false && nn->bad == true){
 				// print string
-				tmp = nn;
+				tmp = nn; tlct = lct;
 				while (true){
 					cstr[tlct--] = tmp->c;
 					if (!tmp->root)
@@ -84,8 +83,10 @@ void recurse(struct node * nd, int lct){ // only if +-
 					else
 						break;
 				}
-				cstr[lct+1] = '\0';
-				printf("END %s\n", cstr);
+				cstr[lct+1] = '\n';
+				cstr[lct+2] = '\0';
+				strcat(out, cstr);
+				// printf("END %s\n", cstr);
 				ct ++;
 			}
 		}
@@ -120,8 +121,8 @@ int main(){
 	int t, i, n;
 	s(n);
 	char ch, temp;
-	char str[2 * 100000 + 1];
-	char out[4 * 100000 + 1];
+	char str[2 * 100000 + 10], chs[5];
+	out[0] = '\0';
 	ct = 0;
 
 	// init
@@ -130,8 +131,13 @@ int main(){
 	}
 
 	for (i=0; i<n; i++){
-		scanf("%c%c %s", &temp, &ch, str); // capture \n
-		printf("%s\n", str);
+		scanf("%s %s", chs, str); // capture \n
+		ch = chs[0];
+		// works on my computer
+		// scanf("%c%c %s", &temp, &ch, str); // capture \n
+		assert((ch == '+') || (ch == '-')); // INPUT MF
+		// assert(str[0] != ' ');
+		// printf("%s\n", str);
 		insert(str, strlen(str), (ch == '-'));
 	}
 
@@ -140,13 +146,23 @@ int main(){
 			if (roots[i].good && roots[i].bad)
 				recurse(&roots[i], 1);
 			else if (roots[i].bad == true && roots[i].good == false){
-				printf("END %c\n", roots[i].c);
+				// printf("END %c\n", roots[i].c);
+				char cstr[3];
+				cstr[0] = roots[i].c; cstr[1] = '\n'; cstr[2] = '\0';
+				strcat(out, cstr);
 				ct ++;
 			}
 		}
+		if (ct < 0) break;
+	}
+
+	if (ct < 0){
+		printf("-1\n");
+		return 0;
 	}
 
 	p(ct);
+	printf("%s", out);
 
 	return 0;
 }
