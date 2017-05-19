@@ -12,7 +12,7 @@ typedef long long ll;
 
 
 struct node {
-	bool good, bad, root;
+	bool good, bad, root, wrongEnds;
 	char c;
 	struct node * parent;
 	struct node * childs;
@@ -30,6 +30,7 @@ struct node makeNode(char c, bool isBad, bool isRoot){
 	t.good = !isBad;
 	t.bad = isBad;
 	t.root = isRoot;
+	t.wrongEnds = false;
 	t.c = c;
 	t.childs = (struct node *) malloc(26 * sizeof(struct node));
 	for (int i=0; i<26; i++){
@@ -45,35 +46,25 @@ bool isNodeInit(struct node * nd){
 void recurse(struct node * nd, int lct){ // only if +-
 	if (ct < 0) // tragedy
 		return;
-
-	int i;
-	struct node * nn;
-	bool foundGood = false, foundBad = false, endHere = true;
-	for (i=0; i<26; i++){
-		nn = &(nd->childs[i]);
-		if (isNodeInit(nn)){
-			if (nn->good && nn->bad){
-				endHere = false;
-				recurse(nn, lct+1);
-			}
-			if (nn->good) foundGood = true;
-			if (nn->bad) foundBad = true;
-		}
-	}
-	// no bad ahead but goods, cant firewall bad, end here
-	if (!foundBad){
+	if (nd->wrongEnds){ // end of a bad word, cant do anything
 		ct = -1 * MODULO;
 		return;
 	}
 
+	int i;
+	struct node * nn;
+	bool foundBad = false;
 	char cstr[lct + 4];
 	struct node * tmp;
 	int tlct = lct;
-	// good..bad and bad..good
+
 	for (i=0; i<26; i++){
 		nn = &(nd->childs[i]);
 		if (isNodeInit(nn)){
-			if (nn->good == false && nn->bad == true){
+			if (nn->good && nn->bad){
+				recurse(nn, lct+1);
+			} else if (nn->good == false && nn->bad == true){
+				// good..bad and bad..good
 				// print string
 				tmp = nn; tlct = lct;
 				while (true){
@@ -89,7 +80,14 @@ void recurse(struct node * nd, int lct){ // only if +-
 				// printf("END %s\n", cstr);
 				ct ++;
 			}
+
+			if (nn->bad) foundBad = true;
 		}
+	}
+	// no bad ahead but goods, cant firewall bad, end here
+	if (!foundBad){
+		ct = -1 * MODULO;
+		return;
 	}
 }
 
@@ -111,7 +109,10 @@ void insert(char * str, int len, bool isBad){
 			else
 				nd->good = true;
 		}
-		if (i == len-1) break;
+		if (i == len-1){
+			if (isBad) nd->wrongEnds = true;
+			break;
+		}
 		prev = nd;
 		nd = &(nd->childs[str[i+1] - 97]);
 	}
@@ -136,7 +137,7 @@ int main(){
 		// works on my computer
 		// scanf("%c%c %s", &temp, &ch, str); // capture \n
 		assert((ch == '+') || (ch == '-')); // INPUT MF
-		// assert(str[0] != ' ');
+		assert(str[0] != ' ');
 		// printf("%s\n", str);
 		insert(str, strlen(str), (ch == '-'));
 	}
