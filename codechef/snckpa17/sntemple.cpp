@@ -51,7 +51,7 @@ int SegmentTree::rminq(int l, int r, int x, int y, int p){
 }
  
  
- 
+
 int main(){
 	int t, i, n, lside, rside, lmin, rmin, finside;
 	ll ans, cans;
@@ -87,7 +87,7 @@ int main(){
 			if (lside > 0){
 				lmin = ft.rminq(i - 1 - lside, i-2, 0, n-1, 1) + (i - lside - 1);
 				if (lmin < 0){ // 1 2 2 (4) ...
-					lside = min(i-1, hs[i] + lmin - 1);
+					lside += lmin;
 				}
 			}
 			if (lside <= 0){ // only a single tower
@@ -98,7 +98,7 @@ int main(){
 			if (rside > 0){
 				rmin = bt.rminq(i+1 - 1, i-1 + rside, 0, n-1, 1) + (n - i - rside);
 				if (rmin < 0){
-					rside = min(n - i, hs[i] + rmin - 1);
+					rside += rmin;
 				}
 			}
 			finside = min(lside, rside);
