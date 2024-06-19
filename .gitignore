@@ -9,3 +9,5 @@ ou*.txt
 # mac dsstores
 # **/.DS_Store
 .DS_Store
+
+.vscode/
