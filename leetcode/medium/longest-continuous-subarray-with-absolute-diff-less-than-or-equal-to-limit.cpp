@@ -1,100 +1,54 @@
-// #include <string>
-// #include<map>
-// #include<vector>
-// #include <algorithm>
-// #include <cmath>
 #include <bits/stdc++.h>
 using namespace std;
 
 class Solution {
 public:
-    // int longestSubarray(vector<int>& nums, int limit) {
-    //   int tempDiff, ans = 1, j, minInSeq, maxInSeq;
-
-    //   for (int i = 0; i < nums.size(); i++) {
-    //     minInSeq = nums[i];
-    //     maxInSeq = minInSeq;
-    //     // if max ans than what comes next already made, break it
-    //     if (ans >= (nums.size() - i)) {
-    //       break;
-    //     }
-    //     for (j = i+1; j < nums.size(); j++) {
-    //       tempDiff = max(abs(nums[j] - minInSeq), abs(maxInSeq - nums[j]));
-    //       if (tempDiff > limit) {
-    //         ans = max(j - i, ans);
-    //         break;
-    //       }
-    //       if (nums[j] < minInSeq) {
-    //         minInSeq = nums[j];
-    //       }
-    //       if (nums[j] > maxInSeq) {
-    //         maxInSeq = nums[j];
-    //       }
-    //     }
-    //     if (j == nums.size()) {
-    //       ans = max(j - i, ans);
-    //     }
-    //   }
-
-    //   return ans;
-    // }
-
     int longestSubarray(vector<int>& nums, int limit) {
       int tempDiff, ans = 1, j = 1;
-      int minInSeq, maxInSeq, prevEqualMinPos, prevEqualMaxPos;
-      stack<pair<int,int>> minStack;
-      stack<pair<int,int>> maxStack;
+      int minInSeq, maxInSeq;
+      map<int, int> dataMap;
+      int temp;
 
       for (int i = 0; i < nums.size(); i++) {
-        if (minStack.empty() || (minStack.top().first > nums[i])) {
-          minStack.push(make_pair(nums[i], i));
+        // can't get better now, so exit
+        if (ans >= (nums.size() - i)) {
+          break;
         }
-        if (maxStack.empty() || (maxStack.top().first < nums[i])) {
-          maxStack.push(make_pair(nums[i], i));
+        // add to map if not present or more left-side value present
+        if (dataMap.find(nums[i]) != dataMap.end()) {
+          temp = dataMap[nums[i]];
+          if (temp < i) {
+            dataMap[nums[i]] = i;
+          }
+        } else {
+          dataMap[nums[i]] = i;
         }
 
         for (; j < nums.size(); j++) {
-          minInSeq = minStack.top().first;
-          maxInSeq = maxStack.top().first;
+          minInSeq = dataMap.begin()->first;
+          maxInSeq = prev(dataMap.end())->first;
           // check if nums[j] can't work, then break
           tempDiff = max(abs(nums[j] - minInSeq), abs(maxInSeq - nums[j]));
-          // save ans and clean up stack
+          // save ans and clean up stuff
           if (tempDiff > limit) {
             ans = max(j - i, ans);
-            printf("%d %d..%d %d..%d\n", j - i, nums[i], nums[j], i, j);
-            // clean up stack
-            while (true) {
-              if (!minStack.empty() && (minStack.top().second <= i)) {
-                minStack.pop();
-              } else if (!maxStack.empty() && (maxStack.top().second <= i)) {
-                maxStack.pop();
-              } else {
-                break;
+            // printf("%d %d..%d %d..%d\n", j - i, nums[i], nums[j], i, j);
+            if (dataMap.find(nums[i]) != dataMap.end()) {
+              temp = dataMap[nums[i]];
+              if (temp == i) {
+                // delete 'i' item if it is right-most for that value
+                dataMap.erase(nums[i]);
               }
             }
             break;
           }
-          if (i == 25) {
-            printf("stack %d %d\n", minStack.top().first, maxStack.top().first);
-          }
-          // if nums[j] works, update values
-          if (nums[j] < minInSeq) {
-            minStack.push(make_pair(nums[j], j));
-          } else if (nums[j] == minInSeq) {
-            prevEqualMinPos = minStack.top().second;
-            if (prevEqualMinPos < j) {
-              minStack.top().second = j;
-              minStack.push(make_pair(nums[j], prevEqualMinPos));
+          if (dataMap.find(nums[j]) != dataMap.end()) {
+            temp = dataMap[nums[j]];
+            if (temp < j) {
+              dataMap[nums[j]] = j;
             }
-          }
-          if (nums[j] > maxInSeq) {
-            maxStack.push(make_pair(nums[j], j));
-          } else if (nums[j] == maxInSeq) {
-            prevEqualMaxPos = maxStack.top().second;
-            if (prevEqualMaxPos < j) {
-              maxStack.top().second = j;
-              maxStack.push(make_pair(nums[j], prevEqualMaxPos));
-            }
+          } else {
+            dataMap[nums[j]] = j;
           }
         }
         if (j == nums.size()) {
@@ -117,7 +71,7 @@ int main() {
 	return 0;
 }
 
-// [10,1,2,4,7,2,6]
+// [10,1,2,4,7,2]
 // 5
 // Ans - 4
 
