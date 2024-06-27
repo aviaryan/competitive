@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-class Solution {
+class Solution2 {
 public:
     int longestSubarray(vector<int>& nums, int limit) {
       int tempDiff, ans = 1, j = 1;
@@ -49,6 +49,84 @@ public:
             }
           } else {
             dataMap[nums[j]] = j;
+          }
+        }
+        if (j == nums.size()) {
+          ans = max(j - i, ans);
+          // can't get better than this as we reached till end now, so future solutions will be worse
+          break;
+        }
+      }
+
+      return ans;
+    }
+};
+
+class Solution {
+public:
+    int longestSubarray(vector<int>& nums, int limit) {
+      int tempDiff, ans = 1, j = 1;
+      int minInSeq, maxInSeq, prevEqualMinPos, prevEqualMaxPos, curItem;
+      stack<pair<int,int>> minStack;
+      stack<pair<int,int>> maxStack;
+
+      for (int i = 0; i < nums.size(); i++) {
+        curItem = nums[i];
+        // if (minStack.empty() || (minStack.top().first > nums[i])) {
+        //   minStack.push(make_pair(nums[i], i));
+        // }
+        // if (maxStack.empty() || (maxStack.top().first < nums[i])) {
+        //   maxStack.push(make_pair(nums[i], i));
+        // }
+        if (i >= j) j = i + 1;
+
+        for (; j < nums.size(); j++) {
+          if (minStack.empty()) {
+            minStack.push(make_pair(nums[j], j));
+          }
+          if (maxStack.empty()) {
+            maxStack.push(make_pair(nums[j], j));
+          }
+          minInSeq = minStack.top().first;
+          maxInSeq = maxStack.top().first;
+          // check if nums[j] can't work, then break
+          tempDiff = max(
+            max(abs(minInSeq - maxInSeq), abs(curItem - nums[j])),
+            max(abs(nums[j] - minInSeq), abs(maxInSeq - nums[j]))
+          );
+          // save ans and clean up stack
+          if (tempDiff > limit) {
+            printf("%d %d..%d %d..%d\n", j - i, nums[i], nums[j], i, j);
+            ans = max(j - i, ans);
+            // clean up stack
+            while (true) {
+              if (!minStack.empty() && (minStack.top().second <= (i+1))) {
+                minStack.pop();
+              } else if (!maxStack.empty() && (maxStack.top().second <= (i+1))) {
+                maxStack.pop();
+              } else {
+                break;
+              }
+            }
+            break;
+          }
+          if (i == 25) {
+            printf("25: %d %d %d\n", nums[j], minInSeq, maxInSeq);
+          }
+          // if nums[j] works, update values
+          if (nums[j] < minInSeq) {
+            minStack.push(make_pair(nums[j], j));
+          } else if (nums[j] == minInSeq) {
+            prevEqualMinPos = minStack.top().second;
+            minStack.top().second = j;
+            minStack.push(make_pair(nums[j], prevEqualMinPos));
+          }
+          if (nums[j] > maxInSeq) {
+            maxStack.push(make_pair(nums[j], j));
+          } else if (nums[j] == maxInSeq) {
+            prevEqualMaxPos = maxStack.top().second;
+            maxStack.top().second = j;
+            maxStack.push(make_pair(nums[j], prevEqualMaxPos));
           }
         }
         if (j == nums.size()) {
